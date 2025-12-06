@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+
+{% block title %}التواصل مع الأخصائي - عودة آمنة{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    
+    <!-- Back Button -->
+    <a href="{% url 'beneficiary_dashboard' %}" class="btn btn-secondary" style="margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+        → العودة للرئيسية
+    </a>
+    
+    <!-- Header -->
+    <div class="card" style="background: linear-gradient(135deg, #1a5f4a 0%, #2d8b6d 100%); color: white;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.5rem; margin: 0;">💬 التواصل مع الأخصائي</h1>
+                <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">أرسل رسالة أو استفسار للأخصائي المسؤول</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Case Worker Info -->
+    {% if profile.assigned_case_worker %}
+    <div class="card">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                👤
+            </div>
+            <div>
+                <h3 style="margin: 0; color: var(--primary-dark);">{{ profile.assigned_case_worker.full_name }}</h3>
+                <div style="color: var(--text-muted);">أخصائي اجتماعي</div>
+            </div>
+            <div style="margin-right: auto; display: flex; gap: 0.5rem;">
+                {% if profile.assigned_case_worker.phone %}
+                <a href="tel:{{ profile.assigned_case_worker.phone }}" class="btn btn-primary btn-sm">📞 اتصال</a>
+                <a href="https://wa.me/966{{ profile.assigned_case_worker.phone|slice:'1:' }}" target="_blank" class="btn btn-sm" style="background: #25D366; color: white;">💬 واتساب</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Message Form -->
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">نوع الرسالة</label>
+                <select name="message_type" class="form-control" required>
+                    <option value="">-- اختر --</option>
+                    <option value="inquiry">❓ استفسار عام</option>
+                    <option value="help">🆘 طلب مساعدة</option>
+                    <option value="update">📝 تحديث عن حالتي</option>
+                    <option value="appointment">📅 طلب موعد</option>
+                    <option value="complaint">📢 شكوى أو اقتراح</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">الرسالة</label>
+                <textarea name="message_content" class="form-control" rows="5" required
+                    placeholder="اكتب رسالتك هنا... سيتم إرسالها للأخصائي المسؤول عنك"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                📤 إرسال الرسالة
+            </button>
+        </form>
+    </div>
+    
+    <!-- Previous Messages -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">📨 الرسائل السابقة</h2>
+        </div>
+        
+        {% if messages_list %}
+            {% for msg in messages_list %}
+            <div style="padding: 1rem; background: {% if msg.is_from_beneficiary %}#e0f2fe{% else %}#f0fdf4{% endif %}; border-radius: 10px; margin-bottom: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong>{% if msg.is_from_beneficiary %}أنت{% else %}{{ profile.assigned_case_worker.full_name }}{% endif %}</strong>
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">{{ msg.created_at|timesince }}</span>
+                </div>
+                <p style="margin: 0;">{{ msg.content }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <p>لا توجد رسائل سابقة</p>
+                <p style="color: var(--text-muted);">ابدأ محادثة مع الأخصائي الآن</p>
+            </div>
+        {% endif %}
+    </div>
+    {% else %}
+    
+    <!-- No Case Worker Assigned -->
+    <div class="card" style="text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+        <h2 style="color: var(--primary-dark);">لم يتم تعيين أخصائي بعد</h2>
+        <p style="color: var(--text-muted);">سيتم تعيين أخصائي لمتابعتك قريباً، وستتمكن من التواصل معه هنا.</p>
+        <a href="{% url 'beneficiary_dashboard' %}" class="btn btn-primary" style="margin-top: 1rem;">← العودة</a>
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}
+

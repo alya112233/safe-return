@@ -1,0 +1,242 @@
+{% extends 'core/base.html' %}
+
+{% block title %}ملف {{ profile.user.full_name }} - عودة آمنة{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="color: var(--primary-dark); margin-bottom: 0.5rem;">{{ profile.user.full_name }}</h2>
+        <div style="color: var(--text-muted);">
+            <span>🪪 {{ profile.user.national_id }}</span>
+            <span style="margin: 0 1rem;">|</span>
+            <span>📍 {{ profile.get_city_display }}</span>
+            <span style="margin: 0 1rem;">|</span>
+            <span>📅 تاريخ الإفراج: {{ profile.release_date|date:"Y/m/d" }}</span>
+        </div>
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <span class="risk-badge risk-{{ profile.risk_level }}" style="font-size: 1rem; padding: 0.5rem 1rem;">
+            {% if profile.risk_level == 'green' %}🟢{% elif profile.risk_level == 'yellow' %}🟡{% else %}🔴{% endif %}
+            {{ profile.get_risk_level_display }}
+        </span>
+        <a href="{% url 'caseworker_dashboard' %}" class="btn btn-secondary btn-sm">← العودة</a>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-4" style="margin-bottom: 1.5rem;">
+    <div class="card stat-card">
+        <div class="stat-number">{{ profile.current_month }}/12</div>
+        <div class="stat-label">الشهر الحالي</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-number">{{ checkins.count }}</div>
+        <div class="stat-label">متابعات مكتملة</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-number">{{ tickets.count }}</div>
+        <div class="stat-label">تذاكر الدعم</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-number">{{ profile.progress_percentage }}%</div>
+        <div class="stat-label">نسبة الإنجاز</div>
+    </div>
+</div>
+
+<!-- Risk Summary -->
+<div class="card" style="border-right: 4px solid {% if profile.risk_level == 'red' %}var(--danger){% elif profile.risk_level == 'yellow' %}var(--warning){% else %}var(--success){% endif %};">
+    <div class="card-header">
+        <h2 class="card-title">📊 تحليل الحالة</h2>
+    </div>
+    
+    <div class="grid grid-2">
+        <div>
+            <strong>عوامل المخاطر:</strong>
+            {% if risk_summary.factors %}
+            <ul style="margin-top: 0.5rem; padding-right: 1.5rem;">
+                {% for factor in risk_summary.factors %}
+                <li style="color: var(--danger);">{{ factor }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color: var(--success); margin-top: 0.5rem;">✅ لا توجد عوامل خطورة حالياً</p>
+            {% endif %}
+        </div>
+        <div>
+            <strong>التوصيات:</strong>
+            {% if risk_summary.recommendations %}
+            <ul style="margin-top: 0.5rem; padding-right: 1.5rem;">
+                {% for rec in risk_summary.recommendations %}
+                <li style="color: var(--primary);">{{ rec }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">استمر في المتابعة الدورية</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Check-ins -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">📅 سجل المتابعات الشهرية</h2>
+    </div>
+    
+    {% if checkins %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>الشهر</th>
+                    <th>السكن</th>
+                    <th>العمل</th>
+                    <th>الحالة النفسية</th>
+                    <th>العائلة</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for checkin in checkins %}
+                <tr>
+                    <td><strong>الشهر {{ checkin.month_index }}</strong></td>
+                    <td>
+                        <span class="{% if checkin.housing_status == 'homeless' %}risk-badge risk-red{% elif checkin.housing_status == 'temporary' %}risk-badge risk-yellow{% else %}risk-badge risk-green{% endif %}">
+                            {{ checkin.get_housing_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="{% if checkin.job_status == 'unemployed' %}risk-badge risk-yellow{% elif checkin.job_status == 'employed' %}risk-badge risk-green{% else %}risk-badge risk-green{% endif %}">
+                            {{ checkin.get_job_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="{% if checkin.mental_state == 'bad' %}risk-badge risk-red{% elif checkin.mental_state == 'stressed' %}risk-badge risk-yellow{% else %}risk-badge risk-green{% endif %}">
+                            {{ checkin.get_mental_state_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="{% if checkin.family_status == 'problematic' %}risk-badge risk-yellow{% elif checkin.family_status == 'no_contact' %}risk-badge risk-yellow{% else %}risk-badge risk-green{% endif %}">
+                            {{ checkin.get_family_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ checkin.created_at|date:"Y/m/d" }}</td>
+                </tr>
+                {% if checkin.free_text_notes %}
+                <tr>
+                    <td colspan="6" style="background: var(--bg-light); font-size: 0.9rem;">
+                        📝 <strong>ملاحظات:</strong> {{ checkin.free_text_notes }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <p>لم يتم تسجيل أي متابعات شهرية بعد</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Support Tickets -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">🎫 تذاكر الدعم</h2>
+        <a href="{% url 'create_ticket' profile.id %}" class="btn btn-primary btn-sm">+ إنشاء تذكرة</a>
+    </div>
+    
+    {% if tickets %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>النوع</th>
+                    <th>الحالة</th>
+                    <th>الملاحظات</th>
+                    <th>المصدر</th>
+                    <th>التاريخ</th>
+                    <th>إجراء</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.get_ticket_type_display }}</td>
+                    <td>
+                        <span class="status-badge status-{{ ticket.status }}">
+                            {{ ticket.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ ticket.notes|truncatewords:15 }}</td>
+                    <td>
+                        {% if ticket.is_auto_generated %}
+                        <span style="color: var(--text-muted);">🤖 تلقائي</span>
+                        {% else %}
+                        <span>👤 {{ ticket.created_by.full_name }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ ticket.created_at|date:"Y/m/d" }}</td>
+                    <td>
+                        <form method="post" action="{% url 'update_ticket_status' ticket.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <select name="status" class="form-control" style="padding: 0.25rem; width: auto;" onchange="this.form.submit()">
+                                <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>مفتوح</option>
+                                <option value="in_progress" {% if ticket.status == 'in_progress' %}selected{% endif %}>قيد المعالجة</option>
+                                <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>تم الحل</option>
+                                <option value="closed" {% if ticket.status == 'closed' %}selected{% endif %}>مغلق</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">🎫</div>
+        <p>لا توجد تذاكر دعم</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Actions -->
+<div class="card" style="background: var(--bg-light);">
+    <h3 style="margin-bottom: 1rem;">⚡ إجراءات</h3>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'create_ticket' profile.id %}" class="btn btn-primary">
+            + إنشاء تذكرة دعم
+        </a>
+        
+        {% if profile.current_month >= 12 and not profile.is_completed %}
+        <form method="post" action="{% url 'mark_profile_completed' profile.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary" onclick="return confirm('هل أنت متأكد من إكمال المتابعة؟')">
+                ✅ إكمال برنامج المتابعة
+            </button>
+        </form>
+        {% endif %}
+        
+        {% if profile.user.phone %}
+        <a href="tel:{{ profile.user.phone }}" class="btn btn-secondary">
+            📞 اتصال: {{ profile.user.phone }}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Notes -->
+{% if profile.notes %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">📝 ملاحظات الملف</h2>
+    </div>
+    <p>{{ profile.notes }}</p>
+</div>
+{% endif %}
+{% endblock %}
+

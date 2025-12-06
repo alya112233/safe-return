@@ -1,0 +1,55 @@
+/* 
+ * عودة آمنة - Safe Return
+ * Additional CSS styles
+ * Main styles are in base.html for simplicity
+ */
+
+/* Print styles for reports */
+@media print {
+    .header, .absher-banner, .btn, form {
+        display: none !important;
+    }
+    
+    .card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
+
+/* Animation for notifications */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.notification-item.unread {
+    animation: pulse 2s infinite;
+}
+
+/* Smooth transitions */
+.card, .btn, .form-control {
+    transition: all 0.2s ease;
+}
+
+/* Focus states for accessibility */
+.btn:focus, .form-control:focus {
+    outline: 3px solid rgba(26, 95, 74, 0.3);
+    outline-offset: 2px;
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* RTL specific adjustments */
+[dir="rtl"] .month-grid {
+    direction: rtl;
+}
+
+[dir="rtl"] table {
+    direction: rtl;
+}
+

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أبشر - تسجيل الدخول</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #004d40 0%, #00695c 50%, #00897b 100%);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Absher Header */
+        .absher-header {
+            background: rgba(0,0,0,0.2);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .absher-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .absher-logo img {
+            height: 40px;
+        }
+        
+        .absher-logo h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+        }
+        
+        .absher-logo span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .saudi-emblem {
+            font-size: 2rem;
+        }
+        
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #1a5f4a 0%, #2d8b6d 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .login-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        .login-body {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 2px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #1a5f4a;
+        }
+        
+        .form-control::placeholder {
+            letter-spacing: normal;
+            color: #999;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1a5f4a 0%, #2d8b6d 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(26, 95, 74, 0.4);
+        }
+        
+        .login-footer {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            margin-top: 1.5rem;
+        }
+        
+        .login-footer p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .login-footer a {
+            color: #1a5f4a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Error Message */
+        .error-msg {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        /* Demo hint */
+        .demo-hint {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .demo-hint strong {
+            color: #92400e;
+        }
+        
+        .demo-ids {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .demo-id {
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-family: monospace;
+            cursor: pointer;
+            border: 1px solid #fcd34d;
+        }
+        
+        .demo-id:hover {
+            background: #fef3c7;
+        }
+        
+        /* Switch to caseworker */
+        .switch-role {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .switch-role a {
+            color: white;
+            opacity: 0.8;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .switch-role a:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Absher-style Header -->
+    <header class="absher-header">
+        <div class="absher-logo">
+            <span class="saudi-emblem">🇸🇦</span>
+            <div>
+                <h1>أبشر</h1>
+                <span>Absher</span>
+            </div>
+        </div>
+        <div style="text-align: left; font-size: 0.9rem;">
+            <div>وزارة الداخلية</div>
+            <div style="opacity: 0.8;">Ministry of Interior</div>
+        </div>
+    </header>
+    
+    <main class="main-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h2>🏠 خدمة عودة آمنة</h2>
+                <p>برنامج إعادة الاندماج المجتمعي</p>
+            </div>
+            
+            <div class="login-body">
+                {% if error %}
+                <div class="error-msg">
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                <!-- Demo hint for hackathon -->
+                <div class="demo-hint">
+                    <strong>🎯 للتجربة - أرقام هوية المستفيدين:</strong>
+                    <div class="demo-ids">
+                        <span class="demo-id" onclick="document.getElementById('national_id').value='1111111111'">1111111111</span>
+                        <span class="demo-id" onclick="document.getElementById('national_id').value='2222222222'">2222222222</span>
+                        <span class="demo-id" onclick="document.getElementById('national_id').value='3333333333'">3333333333</span>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">رقم الهوية الوطنية</label>
+                        <input type="text" 
+                               id="national_id"
+                               name="national_id" 
+                               class="form-control" 
+                               placeholder="أدخل رقم الهوية"
+                               maxlength="10"
+                               pattern="[0-9]{10}"
+                               required>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">
+                        دخول ←
+                    </button>
+                </form>
+                
+                <div class="login-footer">
+                    <p>هذه الخدمة مخصصة للمسجلين في برنامج عودة آمنة</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="switch-role">
+            <a href="{% url 'login_select' %}">👨‍💼 دخول كأخصائي / جهة داعمة</a>
+        </div>
+    </main>
+</body>
+</html>
+

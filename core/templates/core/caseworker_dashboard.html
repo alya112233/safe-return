@@ -1,0 +1,154 @@
+{% extends 'core/base.html' %}
+
+{% block title %}لوحة الأخصائي - عودة آمنة{% endblock %}
+
+{% block content %}
+<!-- Stats Summary -->
+<div class="grid grid-3" style="margin-bottom: 2rem;">
+    <div class="card stat-card" style="border-top: 4px solid var(--danger);">
+        <div class="stat-number" style="color: var(--danger);">{{ risk_counts.red }}</div>
+        <div class="stat-label">🔴 حالات حرجة</div>
+    </div>
+    <div class="card stat-card" style="border-top: 4px solid var(--warning);">
+        <div class="stat-number" style="color: var(--warning);">{{ risk_counts.yellow }}</div>
+        <div class="stat-label">🟡 تحتاج متابعة</div>
+    </div>
+    <div class="card stat-card" style="border-top: 4px solid var(--success);">
+        <div class="stat-number" style="color: var(--success);">{{ risk_counts.green }}</div>
+        <div class="stat-label">🟢 مستقرة</div>
+    </div>
+</div>
+
+<!-- Notifications -->
+{% if notifications %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">🔔 تنبيهات جديدة</h2>
+    </div>
+    {% for notif in notifications %}
+    <div class="notification-item unread">
+        <span>{{ notif.message }}</span>
+        <small style="color: var(--text-muted); margin-right: auto;">{{ notif.created_at|timesince }}</small>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Filters -->
+<div class="card">
+    <form method="get" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+        <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 200px;">
+            <label class="form-label">تصفية حسب مستوى الخطورة</label>
+            <select name="risk" class="form-control" onchange="this.form.submit()">
+                <option value="">الكل</option>
+                <option value="red" {% if risk_filter == 'red' %}selected{% endif %}>🔴 أحمر</option>
+                <option value="yellow" {% if risk_filter == 'yellow' %}selected{% endif %}>🟡 أصفر</option>
+                <option value="green" {% if risk_filter == 'green' %}selected{% endif %}>🟢 أخضر</option>
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 200px;">
+            <label class="form-label">تصفية حسب المدينة</label>
+            <select name="city" class="form-control" onchange="this.form.submit()">
+                <option value="">الكل</option>
+                {% for value, label in cities %}
+                <option value="{{ value }}" {% if city_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <a href="{% url 'caseworker_dashboard' %}" class="btn btn-secondary btn-sm">إعادة تعيين</a>
+    </form>
+</div>
+
+<!-- Profiles Table -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">👥 ملفات المستفيدين</h2>
+        <span style="color: var(--text-muted);">{{ profiles.count }} ملف</span>
+    </div>
+    
+    {% if profiles %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>رقم الهوية</th>
+                    <th>المدينة</th>
+                    <th>الشهر</th>
+                    <th>مستوى الخطورة</th>
+                    <th>التذاكر المفتوحة</th>
+                    <th>إجراء</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                <tr>
+                    <td>
+                        <strong>{{ profile.user.full_name }}</strong>
+                    </td>
+                    <td style="font-family: monospace;">{{ profile.user.national_id }}</td>
+                    <td>{{ profile.get_city_display }}</td>
+                    <td>
+                        <span style="background: var(--bg-light); padding: 0.25rem 0.5rem; border-radius: 8px;">
+                            {{ profile.current_month }}/12
+                        </span>
+                    </td>
+                    <td>
+                        <span class="risk-badge risk-{{ profile.risk_level }}">
+                            {% if profile.risk_level == 'green' %}🟢{% elif profile.risk_level == 'yellow' %}🟡{% else %}🔴{% endif %}
+                            {{ profile.get_risk_level_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% with open_count=profile.tickets.all|length %}
+                        {% if open_count > 0 %}
+                        <span class="status-badge status-open">{{ open_count }}</span>
+                        {% else %}
+                        <span style="color: var(--text-muted);">-</span>
+                        {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <a href="{% url 'profile_detail' profile.id %}" class="btn btn-primary btn-sm">
+                            عرض التفاصيل
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📂</div>
+        <p>لا توجد ملفات تطابق معايير البحث</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="card" style="background: var(--bg-light);">
+    <h3 style="margin-bottom: 1rem;">⚡ إجراءات سريعة</h3>
+    <div class="grid grid-3">
+        <div>
+            <strong style="color: var(--danger);">حالات تحتاج تدخل عاجل</strong>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                ركز على الحالات الحمراء أولاً
+            </p>
+        </div>
+        <div>
+            <strong style="color: var(--warning);">متابعة دورية</strong>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                تواصل مع الحالات الصفراء أسبوعياً
+            </p>
+        </div>
+        <div>
+            <strong style="color: var(--success);">حالات مستقرة</strong>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                متابعة شهرية كافية
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

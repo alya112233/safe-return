@@ -1,0 +1,346 @@
+{% extends 'core/base.html' %}
+
+{% block title %}عودة آمنة - أبشر{% endblock %}
+
+{% block content %}
+<!-- Absher-style Service Header -->
+<div class="card" style="background: linear-gradient(135deg, #1a5f4a 0%, #2d8b6d 100%); color: white; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">خدمات أبشر أفراد</div>
+            <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">🏠 عودة آمنة</h1>
+            <p style="opacity: 0.9; margin: 0;">برنامج إعادة الاندماج المجتمعي</p>
+        </div>
+        <div style="text-align: left;">
+            <div style="font-size: 0.85rem; opacity: 0.8;">رقم الهوية</div>
+            <div style="font-size: 1.25rem; font-family: monospace;">{{ user.national_id }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Message -->
+<div class="card" style="border-right: 4px solid var(--primary); background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
+    <h2 style="color: var(--primary-dark); margin-bottom: 0.75rem;">
+        مرحباً {{ user.full_name }} 👋
+    </h2>
+    <p style="margin: 0; color: var(--text-dark);">
+        أنت مسجل في برنامج <strong>عودة آمنة</strong> للدعم والمتابعة لمدة 12 شهر. 
+        هذه الخدمة تربطك بالأخصائيين الاجتماعيين والجهات الداعمة لمساعدتك في إعادة الاندماج.
+    </p>
+</div>
+
+<!-- Progress Overview -->
+<div class="grid grid-3" style="margin-bottom: 1.5rem;">
+    <div class="card stat-card" style="text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📅</div>
+        <div class="stat-number" style="font-size: 2rem;">{{ profile.current_month }}/12</div>
+        <div class="stat-label">الشهر الحالي من البرنامج</div>
+        <div class="progress-container" style="margin-top: 1rem;">
+            <div class="progress-bar" style="width: {{ profile.progress_percentage }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="card stat-card" style="text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📍</div>
+        <div style="font-size: 1.25rem; font-weight: 700;">{{ profile.get_city_display }}</div>
+        <div class="stat-label">منطقة الخدمة</div>
+    </div>
+    
+    <div class="card stat-card" style="text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📆</div>
+        <div style="font-size: 1rem; font-weight: 700;">{{ profile.end_of_followup_date|date:"Y/m/d" }}</div>
+        <div class="stat-label">تاريخ انتهاء البرنامج</div>
+    </div>
+</div>
+
+<!-- Assigned Case Worker -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">👨‍💼 الأخصائي المسؤول عن متابعتك</h2>
+    </div>
+    
+    {% if profile.assigned_case_worker %}
+    <div style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem;">
+            👤
+        </div>
+        <div style="flex: 1;">
+            <h3 style="margin: 0 0 0.25rem 0; color: var(--primary-dark);">{{ profile.assigned_case_worker.full_name }}</h3>
+            <div style="color: var(--text-muted); margin-bottom: 0.5rem;">أخصائي اجتماعي</div>
+            {% if profile.assigned_case_worker.phone %}
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="tel:{{ profile.assigned_case_worker.phone }}" class="btn btn-primary btn-sm">
+                    📞 اتصال: {{ profile.assigned_case_worker.phone }}
+                </a>
+                <a href="https://wa.me/966{{ profile.assigned_case_worker.phone|slice:'1:' }}" target="_blank" class="btn btn-secondary btn-sm" style="background: #25D366; color: white; border: none;">
+                    💬 واتساب
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+        <p>سيتم تعيين أخصائي لمتابعتك قريباً</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- My Progress Cards -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">📊 ملف التقدم الخاص بي</h2>
+    </div>
+    
+    <div class="grid grid-2" style="gap: 1rem;">
+        <!-- Training Courses -->
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 1.25rem; border-radius: 12px; border-right: 4px solid #3b82f6;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.75rem;">📚</span>
+                <div>
+                    <div style="font-size: 0.85rem; color: #1e40af;">الدورات التدريبية</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: #1e3a8a;">2</div>
+                </div>
+            </div>
+            <div style="font-size: 0.8rem; color: #3b82f6;">مسجل في دورتين حالياً</div>
+        </div>
+        
+        <!-- Job Applications -->
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 1.25rem; border-radius: 12px; border-right: 4px solid #22c55e;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.75rem;">💼</span>
+                <div>
+                    <div style="font-size: 0.85rem; color: #166534;">طلبات التوظيف</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: #14532d;">5</div>
+                </div>
+            </div>
+            <div style="font-size: 0.8rem; color: #22c55e;">تم التقديم على 5 وظائف</div>
+        </div>
+        
+        <!-- Case Worker Visits -->
+        <div style="background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); padding: 1.25rem; border-radius: 12px; border-right: 4px solid #eab308;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.75rem;">📅</span>
+                <div>
+                    <div style="font-size: 0.85rem; color: #854d0e;">الزيارات القادمة</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: #713f12;">1</div>
+                </div>
+            </div>
+            <div style="font-size: 0.8rem; color: #ca8a04;">زيارة الأخصائي خلال أسبوع</div>
+        </div>
+        
+        <!-- Completed Checkins -->
+        <div style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); padding: 1.25rem; border-radius: 12px; border-right: 4px solid #a855f7;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.75rem;">✅</span>
+                <div>
+                    <div style="font-size: 0.85rem; color: #7e22ce;">المتابعات المكتملة</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: #581c87;">{{ profile.checkins.count }}/12</div>
+                </div>
+            </div>
+            <div style="font-size: 0.8rem; color: #a855f7;">أكملت {{ profile.checkins.count }} متابعة شهرية</div>
+        </div>
+    </div>
+</div>
+
+<!-- Housing & Work Status -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">🏠 بيانات السكن والعمل</h2>
+    </div>
+    
+    <div class="grid grid-2" style="gap: 1.5rem;">
+        <!-- Housing Info -->
+        <div style="background: var(--bg-light); padding: 1.25rem; border-radius: 12px;">
+            <h3 style="color: var(--primary-dark); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🏠</span> حالة السكن
+            </h3>
+            {% with latest=profile.checkins.first %}
+            {% if latest %}
+            <div style="margin-bottom: 0.75rem;">
+                <div style="font-size: 0.85rem; color: var(--text-muted);">نوع السكن:</div>
+                <div style="font-weight: 600; font-size: 1.1rem;">
+                    {% if latest.housing_status == 'with_family' %}
+                    👨‍👩‍👧 مع العائلة
+                    {% elif latest.housing_status == 'stable' %}
+                    🏡 سكن مستقل (إيجار)
+                    {% elif latest.housing_status == 'temporary' %}
+                    🏨 سكن مؤقت / غرف عزاب
+                    {% else %}
+                    ⚠️ يحتاج دعم سكني
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">أمان السكن:</div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                    {% if latest.housing_status == 'homeless' %}
+                    <span style="color: var(--danger);">🔴 غير مستقر</span>
+                    {% elif latest.housing_status == 'temporary' %}
+                    <span style="color: var(--warning);">🟡 مؤقت</span>
+                    {% else %}
+                    <span style="color: var(--success);">🟢 مستقر</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted);">لم يتم تحديث بيانات السكن بعد</p>
+            {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Work Info -->
+        <div style="background: var(--bg-light); padding: 1.25rem; border-radius: 12px;">
+            <h3 style="color: var(--primary-dark); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>💼</span> حالة العمل
+            </h3>
+            {% with latest=profile.checkins.first %}
+            {% if latest %}
+            <div style="margin-bottom: 0.75rem;">
+                <div style="font-size: 0.85rem; color: var(--text-muted);">الحالة الوظيفية:</div>
+                <div style="font-weight: 600; font-size: 1.1rem;">
+                    {% if latest.job_status == 'employed' %}
+                    ✅ موظف
+                    {% elif latest.job_status == 'self_employed' %}
+                    🏪 عمل حر
+                    {% elif latest.job_status == 'training' %}
+                    📚 في تدريب
+                    {% elif latest.job_status == 'searching' %}
+                    🔍 يبحث عن عمل
+                    {% else %}
+                    ⏳ عاطل
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">مكان العمل:</div>
+                <div style="font-weight: 600;">
+                    {% if latest.job_status == 'employed' or latest.job_status == 'self_employed' %}
+                    📍 {{ profile.get_city_display }}
+                    {% else %}
+                    --
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted);">لم يتم تحديث بيانات العمل بعد</p>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    
+    <div style="margin-top: 1rem; text-align: center;">
+        <a href="{% url 'checkin_form' %}" class="btn btn-primary btn-sm">
+            📝 تحديث بياناتي
+        </a>
+    </div>
+</div>
+
+<!-- My Support Requests -->
+{% if open_tickets %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">📋 طلبات الدعم الخاصة بك</h2>
+    </div>
+    
+    {% for ticket in open_tickets %}
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-light); border-radius: 10px; margin-bottom: 0.75rem;">
+        <div style="font-size: 1.5rem;">
+            {% if ticket.ticket_type == 'job' %}💼{% elif ticket.ticket_type == 'psychological' %}🧠{% elif ticket.ticket_type == 'housing' %}🏠{% elif ticket.ticket_type == 'social' %}🤝{% else %}💰{% endif %}
+        </div>
+        <div style="flex: 1;">
+            <div style="font-weight: 600;">
+                {% if ticket.ticket_type == 'job' %}مساعدة في التوظيف
+                {% elif ticket.ticket_type == 'psychological' %}دعم نفسي
+                {% elif ticket.ticket_type == 'housing' %}مساعدة سكنية
+                {% elif ticket.ticket_type == 'social' %}دعم اجتماعي
+                {% else %}مساعدة مالية{% endif %}
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+                {% if ticket.status == 'open' %}⏳ قيد المراجعة
+                {% elif ticket.status == 'in_progress' %}🔄 جاري العمل عليه
+                {% elif ticket.status == 'resolved' %}✅ تم
+                {% else %}📁 مغلق{% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Quick Actions for Beneficiary -->
+<div class="card" style="background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-light) 100%);">
+    <div class="card-header">
+        <h2 class="card-title">⚡ خدمات سريعة</h2>
+    </div>
+    
+    <div class="grid grid-2">
+        <a href="{% url 'checkin_form' %}" class="card" style="text-decoration: none; color: inherit; text-align: center; margin-bottom: 0; transition: transform 0.2s;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📝</div>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">تحديث حالتي</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">أخبرنا عن وضعك الحالي (سكن، عمل، حالة نفسية)</p>
+        </a>
+        
+        <a href="{% url 'job_list' %}" class="card" style="text-decoration: none; color: inherit; text-align: center; margin-bottom: 0; transition: transform 0.2s;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">💼</div>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">فرص العمل</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">تصفح الوظائف المتاحة في {{ profile.get_city_display }}</p>
+        </a>
+        
+        <a href="{% url 'beneficiary_messages' %}" class="card" style="text-decoration: none; color: inherit; text-align: center; margin-bottom: 0; transition: transform 0.2s;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">💬</div>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">تواصل مع الأخصائي</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">أرسل رسالة أو استفسار</p>
+        </a>
+        
+        <a href="{% url 'support_services' %}" class="card" style="text-decoration: none; color: inherit; text-align: center; margin-bottom: 0; transition: transform 0.2s;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🤝</div>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">الجهات الداعمة</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">تراحم، الضمان، جمعيات الدعم</p>
+        </a>
+    </div>
+</div>
+
+<!-- Notifications -->
+{% if notifications %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">🔔 إشعارات جديدة</h2>
+    </div>
+    {% for notif in notifications %}
+    <div class="notification-item unread">
+        <span>{{ notif.message }}</span>
+        <small style="color: var(--text-muted); margin-right: auto;">{{ notif.created_at|timesince }}</small>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Emergency Contacts -->
+<div class="card" style="background: #fef2f2; border: 1px solid #fecaca;">
+    <div class="card-header" style="border-bottom-color: #fecaca;">
+        <h2 class="card-title" style="color: #dc2626;">🆘 أرقام الطوارئ</h2>
+    </div>
+    <div class="grid grid-3">
+        <div style="text-align: center;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🧠</div>
+            <div style="font-weight: 600;">خط تراحم</div>
+            <div style="color: var(--primary); font-size: 1.25rem;">920033360</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">دعم نفسي 24/7</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">💰</div>
+            <div style="font-weight: 600;">الضمان الاجتماعي</div>
+            <div style="color: var(--primary); font-size: 1.25rem;">800-124-1212</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">مساعدات مالية</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🏠</div>
+            <div style="font-weight: 600;">جمعية الإسكان</div>
+            <div style="color: var(--primary); font-size: 1.25rem;">920020505</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">دعم سكني</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

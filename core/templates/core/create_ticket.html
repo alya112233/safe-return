@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+
+{% block title %}إنشاء تذكرة - عودة آمنة{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">🎫 إنشاء تذكرة دعم جديدة</h2>
+        </div>
+        
+        <div style="background: var(--bg-light); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            <strong>المستفيد:</strong> {{ profile.user.full_name }}<br>
+            <span style="color: var(--text-muted);">{{ profile.user.national_id }}</span>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">نوع التذكرة</label>
+                <select name="ticket_type" class="form-control" required>
+                    <option value="">-- اختر نوع الدعم --</option>
+                    {% for value, label in ticket_types %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">ملاحظات وتفاصيل</label>
+                <textarea name="notes" class="form-control" rows="5" 
+                          placeholder="اكتب تفاصيل الحالة والإجراءات المطلوبة..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    ✅ إنشاء التذكرة
+                </button>
+                <a href="{% url 'profile_detail' profile.id %}" class="btn btn-secondary">
+                    إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Quick Reference -->
+    <div class="card" style="background: var(--bg-light);">
+        <h3 style="margin-bottom: 1rem;">📋 دليل أنواع التذاكر</h3>
+        <ul style="padding-right: 1.5rem; line-height: 2;">
+            <li><strong>💼 دعم وظيفي:</strong> مساعدة في إيجاد عمل أو تدريب مهني</li>
+            <li><strong>🤝 دعم اجتماعي:</strong> مساعدة من تراحم أو جمعيات خيرية</li>
+            <li><strong>🧠 دعم نفسي:</strong> إحالة لمختص نفسي أو خط دعم</li>
+            <li><strong>🏠 دعم سكني:</strong> مساعدة في إيجاد سكن مناسب</li>
+            <li><strong>💰 دعم مالي:</strong> مساعدة مالية طارئة</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+

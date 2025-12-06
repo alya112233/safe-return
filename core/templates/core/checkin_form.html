@@ -1,0 +1,112 @@
+{% extends 'core/base.html' %}
+
+{% block title %}المتابعة الشهرية - عودة آمنة{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+    <!-- Back Button -->
+    <a href="{% url 'beneficiary_dashboard' %}" class="btn btn-secondary" style="margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+        → العودة للرئيسية
+    </a>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">📝 المتابعة الشهرية - الشهر {{ month_index }}</h2>
+        </div>
+        
+        {% if existing_checkin %}
+        <div class="message message-success" style="margin-bottom: 1.5rem;">
+            ✅ لقد قمت بتعبئة هذه المتابعة سابقاً. يمكنك تحديثها أدناه.
+        </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Housing Status -->
+            <div class="form-group">
+                <label class="form-label">🏠 حالة السكن</label>
+                <select name="housing_status" class="form-control" required>
+                    <option value="">-- اختر --</option>
+                    {% for value, label in housing_choices %}
+                    <option value="{{ value }}" {% if existing_checkin.housing_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Job Status -->
+            <div class="form-group">
+                <label class="form-label">💼 حالة العمل</label>
+                <select name="job_status" class="form-control" required>
+                    <option value="">-- اختر --</option>
+                    {% for value, label in job_choices %}
+                    <option value="{{ value }}" {% if existing_checkin.job_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Mental State -->
+            <div class="form-group">
+                <label class="form-label">🧠 الحالة النفسية</label>
+                <select name="mental_state" class="form-control" required>
+                    <option value="">-- اختر --</option>
+                    {% for value, label in mental_choices %}
+                    <option value="{{ value }}" {% if existing_checkin.mental_state == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">
+                    لا تتردد في طلب الدعم النفسي. نحن هنا لمساعدتك.
+                </small>
+            </div>
+            
+            <!-- Family Status -->
+            <div class="form-group">
+                <label class="form-label">👨‍👩‍👧‍👦 حالة العلاقة الأسرية</label>
+                <select name="family_status" class="form-control" required>
+                    <option value="">-- اختر --</option>
+                    {% for value, label in family_choices %}
+                    <option value="{{ value }}" {% if existing_checkin.family_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Free Text Notes -->
+            <div class="form-group">
+                <label class="form-label">📋 ملاحظات إضافية (اختياري)</label>
+                <textarea name="free_text_notes" class="form-control" 
+                          placeholder="هل هناك أي شيء آخر تود مشاركته معنا؟">{% if existing_checkin %}{{ existing_checkin.free_text_notes }}{% endif %}</textarea>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    ✅ حفظ المتابعة
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Help Section -->
+    <div class="card" style="background: var(--bg-light);">
+        <h3 style="margin-bottom: 1rem;">📞 هل تحتاج مساعدة؟</h3>
+        <div class="grid grid-2">
+            <div>
+                <strong>خط تراحم للدعم النفسي</strong><br>
+                <span style="color: var(--primary); font-size: 1.25rem;">920033360</span>
+            </div>
+            <div>
+                <strong>الضمان الاجتماعي</strong><br>
+                <span style="color: var(--primary); font-size: 1.25rem;">800-124-1212</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

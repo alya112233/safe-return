@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}دخول الأخصائيين - عودة آمنة{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">👨‍💼 بوابة الأخصائيين والجهات الداعمة</h2>
+        </div>
+        
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+            اختر حسابك للدخول إلى لوحة التحكم:
+        </p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if users %}
+                <div class="grid grid-2" style="margin-bottom: 1.5rem;">
+                    {% for u in users %}
+                    <label class="card" style="cursor: pointer; margin-bottom: 0; transition: all 0.2s;">
+                        <input type="radio" name="user_id" value="{{ u.id }}" style="margin-left: 0.5rem;">
+                        <strong>{{ u.full_name }}</strong>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">
+                            {% if u.role == 'case_worker' %}
+                            أخصائي اجتماعي
+                            {% elif u.role == 'admin' %}
+                            مدير النظام
+                            {% endif %}
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <p>لا يوجد أخصائيون. يرجى تشغيل أمر إنشاء البيانات التجريبية.</p>
+                </div>
+            {% endif %}
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                🚀 دخول
+            </button>
+        </form>
+    </div>
+    
+    <div style="text-align: center; margin-top: 1.5rem;">
+        <a href="{% url 'absher_login' %}" style="color: var(--primary); text-decoration: none;">
+            ← هل أنت مستفيد؟ ادخل من أبشر
+        </a>
+    </div>
+</div>
+{% endblock %}

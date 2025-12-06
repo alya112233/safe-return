@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+
+{% block title %}فرص العمل - عودة آمنة{% endblock %}
+
+{% block content %}
+<!-- Back Button -->
+<a href="{% url 'beneficiary_dashboard' %}" class="btn btn-secondary" style="margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+    → العودة للرئيسية
+</a>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">💼 فرص العمل المتاحة</h2>
+    </div>
+    
+    {% if user_city %}
+    <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+        يتم عرض الفرص في <strong>{{ user_city }}</strong> أولاً
+    </p>
+    {% endif %}
+    
+    {% if jobs %}
+    <div class="grid grid-2">
+        {% for job in jobs %}
+        <div class="card" style="margin-bottom: 0; {% if job.city == user_city %}border-right: 4px solid var(--primary);{% endif %}">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <h3 style="color: var(--primary-dark);">{{ job.title }}</h3>
+                <span class="risk-badge risk-green" style="font-size: 0.75rem;">
+                    📍 {{ job.get_city_display }}
+                </span>
+            </div>
+            
+            {% if job.company %}
+            <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                🏢 {{ job.company }}
+            </div>
+            {% endif %}
+            
+            <p style="font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.7;">
+                {{ job.description }}
+            </p>
+            
+            {% if job.link_url %}
+            <a href="{{ job.link_url }}" target="_blank" class="btn btn-primary btn-sm">
+                التقديم على الوظيفة ←
+            </a>
+            {% else %}
+            <span style="color: var(--text-muted); font-size: 0.85rem;">
+                للتقديم، تواصل مع الأخصائي الاجتماعي
+            </span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">💼</div>
+        <p>لا توجد فرص عمل متاحة حالياً</p>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">سيتم إشعارك عند توفر فرص جديدة</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Training Resources -->
+<div class="card" style="background: var(--bg-light);">
+    <h3 style="margin-bottom: 1rem;">📚 موارد تدريبية</h3>
+    <div class="grid grid-3">
+        <div>
+            <strong>منصة دروب</strong><br>
+            <span style="color: var(--text-muted);">دورات تدريبية مجانية</span><br>
+            <a href="https://doroob.sa" target="_blank" style="color: var(--primary);">doroob.sa</a>
+        </div>
+        <div>
+            <strong>صندوق تنمية الموارد البشرية</strong><br>
+            <span style="color: var(--text-muted);">برامج دعم التوظيف</span><br>
+            <a href="https://hrdf.org.sa" target="_blank" style="color: var(--primary);">hrdf.org.sa</a>
+        </div>
+        <div>
+            <strong>طاقات</strong><br>
+            <span style="color: var(--text-muted);">البحث عن عمل</span><br>
+            <a href="https://taqat.sa" target="_blank" style="color: var(--primary);">taqat.sa</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+
+{% block title %}لا يوجد ملف - عودة آمنة{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="card" style="text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">📂</div>
+        <h2 style="color: var(--primary-dark); margin-bottom: 1rem;">لا يوجد ملف متابعة</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+            عذراً، لا يوجد ملف متابعة مرتبط بحسابك حالياً.
+        </p>
+        <p style="margin-bottom: 2rem;">
+            إذا كنت تعتقد أن هذا خطأ، يرجى التواصل مع الأخصائي الاجتماعي.
+        </p>
+        <a href="{% url 'login_select' %}" class="btn btn-primary">
+            العودة للصفحة الرئيسية
+        </a>
+    </div>
+</div>
+{% endblock %}
+
