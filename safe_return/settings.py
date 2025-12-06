@@ -15,7 +15,13 @@ SECRET_KEY = 'django-insecure-hackathon-demo-key-not-for-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '.onrender.com', 'safe-return-4dhu.onrender.com']
+
+# CSRF Trusted Origins for Render
+CSRF_TRUSTED_ORIGINS = [
+    'https://safe-return-4dhu.onrender.com',
+    'https://*.onrender.com',
+]
 
 # Application definition
 INSTALLED_APPS = [
