@@ -6,6 +6,7 @@ Both template-based views and DRF API views.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, action
@@ -27,6 +28,7 @@ from .risk_engine import process_checkin, get_risk_summary
 # Template-Based Views (for hackathon UI)
 # =============================================================================
 
+@csrf_exempt
 def absher_login(request):
     """
     Absher-style login for beneficiaries using national ID.
@@ -47,6 +49,7 @@ def absher_login(request):
     return render(request, 'core/absher_login.html', {'error': error})
 
 
+@csrf_exempt
 def login_select(request):
     """
     Login selector for case workers and support organizations.

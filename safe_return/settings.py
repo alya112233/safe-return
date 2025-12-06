@@ -4,6 +4,7 @@ Django settings for safe_return project.
 Hackathon Prototype Settings
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -15,13 +16,20 @@ SECRET_KEY = 'django-insecure-hackathon-demo-key-not-for-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '.onrender.com', 'safe-return-4dhu.onrender.com']
+ALLOWED_HOSTS = ['*']
 
-# CSRF Trusted Origins for Render
+# CSRF Trusted Origins for Render and other hosts
 CSRF_TRUSTED_ORIGINS = [
     'https://safe-return-4dhu.onrender.com',
     'https://*.onrender.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
+
+# Get Render external hostname if available
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
 # Application definition
 INSTALLED_APPS = [
@@ -98,3 +106,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
+
+# For hackathon - trust all CSRF
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
