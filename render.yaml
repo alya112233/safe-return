@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: safe-return
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn safe_return.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
